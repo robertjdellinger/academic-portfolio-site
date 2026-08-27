@@ -125,6 +125,7 @@ jobs:
     - name: Setup Pages
       id: pages
       uses: actions/configure-pages@v5
+      continue-on-error: true
 
     - name: Build with Hugo
       env:
@@ -132,7 +133,8 @@ jobs:
         HUGO_BLOX_LICENSE: ${{ secrets.HUGO_BLOX_LICENSE }}
       run: |
         echo "Hugo Cache Dir: $(hugo config | grep cachedir)"
-        hugo --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+        BASE_URL="${{ steps.pages.outputs.base_url }}"
+        hugo --minify --baseURL "${BASE_URL:+${BASE_URL}/}${BASE_URL:-/}"
 
     - name: Generate Pagefind search index (if applicable)
       run: |
